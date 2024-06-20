@@ -6,12 +6,16 @@ from django.views.decorators.csrf import csrf_exempt
 from twilio.twiml.voice_response import VoiceResponse
 from twilio.rest import Client
 import os
+import json
+
+
 
 @api_view(['GET'])
 def send_test_data(request):
     return Response({
         "data": "Hello from django backend"
     })
+    
     
 TWILIO_ACCOUNT_SID = os.environ['TWILIO_ACCOUNT_SID']
 TWILIO_AUTH_TOKEN = os.environ['TWILIO_AUTH_TOKEN']
@@ -35,8 +39,19 @@ def handle_call(request):
 
 def send_sms(to_number):
     message = client.messages.create(
-        body="Hi there. Click the link to share your location: https://yourserver.com/location",
+        body="Hi there. Click the link to share your location: http://localhost:3000/location",
         from_=TWILIO_PHONE_NUMBER,
         to=to_number
     )
     return message.sid
+
+@csrf_exempt
+def location_view(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+        # 处理接收到的位置信息
+        print(f"Received location: Latitude = {latitude}, Longitude = {longitude}")
+        return JsonResponse({'status': 'success', 'latitude': latitude, 'longitude': longitude})
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
