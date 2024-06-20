@@ -24,6 +24,7 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 
+
 urlpatterns = []
 
 
@@ -35,6 +36,7 @@ urlpatterns += [
     path("admin/", admin.site.urls),
     path('test/', views.send_test_data),
     path('handle_call/', views.handle_call), 
+    path('api/location/', views.location_view),
     
 ]
 
