@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import mapStyles from '../styles/mapStyles';
 import { generatePoliceCarInfo, generateEmergencyPointInfo, generatePoliceStationInfo } from '../styles/infoTemplates';
+import Link from 'next/link';
 
 const policeCars = [
   {
@@ -33,7 +34,8 @@ const emergencyPoints = [
       title: 'Emergency Point 1',
       id: 2024070101001,
       incident: 'Car accident',
-      time: '10:00:00 2024-07-01'
+      time: '10:00:00 2024-07-01',
+      link: '/accident/2024070101001'
     }
   },
   {
@@ -43,7 +45,8 @@ const emergencyPoints = [
       title: 'Emergency Point 2',
       id: 2024070101002,
       incident: 'Robbery',
-      time: '11:20:05 2024-07-01'
+      time: '11:20:05 2024-07-01',
+      link: '/accident/2024070101001'
     }
   }
 ];

@@ -12,6 +12,10 @@ export const generateEmergencyPointInfo = (data: any) => `
     <p style="margin: 0; padding: 5px 10px; font-size: 14px;"> <strong>ID:</strong> ${data.id}</p>
     <p style="margin: 0; padding: 5px 10px; font-size: 14px;"> <strong>Incident:</strong> ${data.incident}</p>
     <p style="margin: 0; padding: 5px 10px; font-size: 14px;"> <strong>Report time:</strong> ${data.time}</p>
+    
+    <p style="margin: 0; padding: 5px 10px; font-size: 14px;"> <strong>Link:</strong> 
+      <a href="/accident/${data.id}" class="text-blue-500 hover:underline">More details</a>
+    </p>
   </div>
 `;
 
