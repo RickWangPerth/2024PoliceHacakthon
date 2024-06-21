@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import emergencyPoints from '../../data/emergencyPoints';
+import emergencyPoints from '../../dummydata/emergencyPoints';
 
 const AccidentMap = dynamic(() => import('../../components/AccidentMap'), {
   ssr: false,
@@ -22,9 +22,9 @@ const AccidentPage: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      console.log("ID:", id); // 添加此行检查ID
+      console.log("ID:", id);
       const point = emergencyPoints.find(point => point.data.id === Number(id));
-      console.log("Point:", point); // 添加此行检查point
+      console.log("Point:", point);
       setData(point ? { ...point.data, position: point.position } : null);
     }
   }, [id]);
@@ -38,9 +38,9 @@ const AccidentPage: React.FC = () => {
       <div className="col-span-2 bg-gray-100 p-4 mx-2 my-4 rounded-lg overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">{data.title}</h2>
         <ul>
-          <li className="mb-2">案件ID: {data.id}</li>
-          <li className="mb-2">事件: {data.incident}</li>
-          <li className="mb-2">时间: {data.time}</li>
+          <li className="mb-2">accident ID: {data.id}</li>
+          <li className="mb-2">incident: {data.incident}</li>
+          <li className="mb-2">time: {data.time}</li>
         </ul>
       </div>
       <div className="col-span-4 bg-white p-4">
