@@ -5,7 +5,7 @@ const HomePage = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch(`http://${window.location.host}/test/`)
+    fetch(`https://${window.location.host}:8000/test/`)
       .then((res) => res.json())
       .then((data) => setData(data.data));
   });
