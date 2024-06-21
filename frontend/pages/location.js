@@ -12,7 +12,7 @@ const LocationSharing = () => {
 
                 // 使用环境变量中的后端URL
 
-          axios.post(`http://${window.location.host}:8000/api/location/`, { latitude, longitude })
+          axios.post(`http://${window.location.host}/api/location/`, { latitude, longitude })
             .then(response => {
               console.log('Location sent successfully:', response.data);
             })
