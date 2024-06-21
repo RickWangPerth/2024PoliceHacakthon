@@ -11,9 +11,8 @@ const LocationSharing = () => {
                 setLocation({ latitude, longitude });
 
                 // 使用环境变量中的后端URL
-          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
-          axios.post(`${backendUrl}/api/location/`, { latitude, longitude })
+          axios.post(`http://${window.location.host}/api/location/`, { latitude, longitude })
             .then(response => {
               console.log('Location sent successfully:', response.data);
             })

@@ -25,7 +25,8 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app/frontend
+      - /app/frontend/node_modules
     depends_on:
       - backend
 
@@ -38,14 +39,14 @@ services:
     image: wernight/ngrok
     command: ngrok http backend:8000
     ports:
-      - "4040:4040"  
+      - "4040:4040"
     environment:
       - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
     networks:
       custom_network:
 
-  backend: 
-    build: 
+  backend:
+    build:
       context: ./backend
       dockerfile: Dockerfile
 
@@ -67,7 +68,7 @@ services:
 
     depends_on:
       - db
-      
+
     networks:
       custom_network:
         aliases:

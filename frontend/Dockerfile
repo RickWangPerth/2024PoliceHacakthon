@@ -2,10 +2,10 @@
 FROM node:18-alpine
 
 # Set the working directory
-WORKDIR /app/frontend/
+WORKDIR /app/frontend
 
 # First copy package.json and package-lock.json
-COPY package*.json .
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
@@ -23,7 +23,7 @@ RUN npm run build
 EXPOSE 3000
 
 # Uncomment the line below to run in development mode with live reloading
-CMD ["npm", "run", "dev"]
+# CMD ["npm", "run", "dev"]
 
 # Uncomment the line below to run in production mode
-# CMD ["npm", "start"]
+CMD ["npm", "start"]
