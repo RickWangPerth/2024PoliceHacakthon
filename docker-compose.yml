@@ -38,6 +38,15 @@ services:
         aliases:
           - ${PROJECT_NAME}_react.local
 
+  redis:
+      image: redis
+      ports:
+        - '6379:6379'
+      networks:
+        custom_network:
+          aliases:
+            - ${PROJECT_NAME}_redis.local
+
   backend: 
     build: 
       context: ./backend

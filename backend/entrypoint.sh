@@ -8,5 +8,5 @@ python manage.py migrate
 # Collect static files
 python manage.py collectstatic --noinput
 
-# Start Django application with Gunicorn
-gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+# Start Django application with Uvicorn
+uvicorn backend.asgi:application --host 0.0.0.0 --port 8000
