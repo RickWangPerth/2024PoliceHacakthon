@@ -11,29 +11,33 @@ import os
 import json
 
 def send_to_chatroom(request):
-    message = request.POST.get('message')
-    print(message)
-    # 获取Channel Layer
-    channel_layer = get_channel_layer()
-    
-    # 构建要发送的消息数据
-    message_data = {
-        'type': 'chat_message',
-        'message': message
-    }
-    
-    # 使用async_to_sync将异步发送转换为同步调用
-    async_to_sync(channel_layer.group_send)(
-        'chat_group',  # 指定要发送到的组名
-        message_data
-    )
-    
-    # 执行发送消息到聊天室的逻辑
-    # ...
-    
-    # 返回成功响应
-    return JsonResponse({'status': 'success'})
-    
+        data = json.loads(request.body)
+        message = data.get('message')
+        print(data)
+        # 获取Channel Layer
+        channel_layer = get_channel_layer()
+        
+        # 构建要发送的消息数据
+        message_data = {
+            'type': 'chat_message',
+            'message': message
+        }
+        
+        # 使用async_to_sync将异步发送转换为同步调用
+        async_to_sync(channel_layer.group_send)(
+            'chat_group',  # 指定要发送到的组名
+            message_data
+        )
+        
+        # 执行发送消息到聊天室的逻辑
+        # ...
+        
+        # 返回成功响应
+        return JsonResponse({'status': 'success'})
+    else:
+        # 处理非POST请求
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
 @api_view(['GET'])
 def send_test_data(request):
     return Response({
