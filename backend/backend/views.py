@@ -10,6 +10,7 @@ from asgiref.sync import async_to_sync
 import os
 import json
 
+@csrf_exempt
 def send_to_chatroom(request):
     print("reques.method is:",request.method)
     print("request.headers is", request.headers)
