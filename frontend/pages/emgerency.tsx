@@ -1,12 +1,10 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import Chat from "@/components/chat";
-
+import ChatBox from "@/components/ChatBox";
 const Emergency = () => {
 
   return (
     <div className="h-full w-full">
-      <Chat />
+      <ChatBox />
     </div>
   );
 };
