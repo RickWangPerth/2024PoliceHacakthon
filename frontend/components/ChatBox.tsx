@@ -130,11 +130,27 @@ const ChatBox: React.FC = () => {
                     )}
                     {msg.type === 'json' && (
                         <div>
-                            {Object.entries(msg.message.data).map(([key, value]) => (
-                                <p key={key}>
-                                    <strong>{key}:</strong> {value}
-                                </p>
-                            ))}
+                            {(() => {
+                                const tempData = JSON.parse(msg.message);
+                                return Object.entries(tempData.data).map(([key, value]) => (
+                                    <p key={key}>
+                                        <strong>{key}:</strong>{' '}
+                                        {typeof value === 'string' ? (
+                                            value
+                                        ) : typeof value === 'number' ? (
+                                            value.toString()
+                                        ) : typeof value === 'boolean' ? (
+                                            value.toString()
+                                        ) : Array.isArray(value) ? (
+                                            value.join(', ')
+                                        ) : typeof value === 'object' ? (
+                                            JSON.stringify(value)
+                                        ) : (
+                                            ''
+                                        )}
+                                    </p>
+                                ));
+                            })()}
                         </div>
                     )}
                 </div>
