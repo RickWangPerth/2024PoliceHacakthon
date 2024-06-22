@@ -12,6 +12,7 @@ import json
 
 def send_to_chatroom(request):
     print("reques.method is:",request.method)
+    print("request.headers is", request.headers)
     if request.method == 'POST':
         data = json.loads(request.body)
         message = data.get('message')
