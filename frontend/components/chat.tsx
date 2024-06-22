@@ -7,7 +7,7 @@ const Chat = () => {
     const [input, setInput] = useState('');
 
     useEffect(() => {
-        const socket = new WebSocket('ws://localhost:8000/ws/chat/');
+        const socket = new WebSocket(`ws://${window.location.host}/api/chat/`);
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
             setMessages(prev => [...prev, data.message]);
