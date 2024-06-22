@@ -25,7 +25,6 @@ def send_to_chatroom(request):
             'chat_group',  
             message_data
         )
-        
         return JsonResponse({'status': 'success'})
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
