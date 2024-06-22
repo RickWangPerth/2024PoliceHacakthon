@@ -19,7 +19,7 @@ def send_to_chatroom(request):
         print(data)
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            'chatroom_demo',  
+            'chat',  
             data
         )
         return JsonResponse({'status': 'success'})
