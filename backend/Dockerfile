@@ -29,6 +29,8 @@ RUN chmod +x /wait-for-postgres.sh
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+RUN pip install --no-cache-dir 'uvicorn[standard]' #have to be here, not working in requirements.txt
+
 # Set the container's entrypoint to the entrypoint.sh script
 ENTRYPOINT ["/entrypoint.sh"]
 

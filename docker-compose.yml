@@ -35,18 +35,17 @@ services:
         aliases:
           - ${PROJECT_NAME}_react.local
 
-  ngrok:
-    image: wernight/ngrok
-    command: ngrok http backend:8000
-    ports:
-      - "4040:4040"
-    environment:
-      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
-    networks:
-      custom_network:
+  redis:
+      image: redis
+      ports:
+        - '6379:6379'
+      networks:
+        custom_network:
+          aliases:
+            - ${PROJECT_NAME}_redis.local
 
-  backend:
-    build:
+  backend: 
+    build: 
       context: ./backend
       dockerfile: Dockerfile
 
