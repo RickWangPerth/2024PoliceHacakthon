@@ -114,22 +114,31 @@ const ChatBox: React.FC = () => {
     return (
         <div className='chatBox h-full flex flex-col'>
             <div className='chatBox_div flex-1 overflow-y-auto'>
-                {messages.map((msg, index) => (
-                    <div key={index} className={`chatItem_div p-2 m-5 w-10/12 rounded-lg ${msg.username === username ? 'ml-auto bg-blue-100' : 'mr-auto bg-green-100'}`}>
-                        <p className='chatItem_header font-bold'>
-                            {msg.username} ({msg.timestamp})
-                        </p>
-                        {msg.type === 'text' && (
-                            <p className='chatItem_content'>{msg.message}</p>
-                        )}
-                        {msg.type === 'image' && (
-                            <img src={msg.message} alt="User uploaded" className="max-w-full" />
-                        )}
-                        {msg.type === 'audio' && (
-                            <audio src={msg.message} controls />
-                        )}
-                    </div>
-                ))}
+            {messages.map((msg, index) => (
+                <div key={index} className={`chatItem_div p-2 m-5 w-10/12 rounded-lg ${msg.username === username ? 'ml-auto bg-blue-100' : 'mr-auto bg-green-100'}`}>
+                    <p className='chatItem_header font-bold'>
+                        {msg.username} ({msg.timestamp})
+                    </p>
+                    {msg.type === 'text' && (
+                        <p className='chatItem_content'>{msg.message}</p>
+                    )}
+                    {msg.type === 'image' && (
+                        <img src={msg.message} alt="User uploaded" className="max-w-full" />
+                    )}
+                    {msg.type === 'audio' && (
+                        <audio src={msg.message} controls />
+                    )}
+                    {msg.type === 'json' && (
+                        <div>
+                            {Object.entries(msg.message.data).map(([key, value]) => (
+                                <p key={key}>
+                                    <strong>{key}:</strong> {value}
+                                </p>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            ))}
             </div>
             <div className='chatBox_input p-5 m-5 inset-x-0 bottom-0 bg-white flex items-center'>
                 <input
