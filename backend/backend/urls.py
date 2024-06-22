@@ -35,8 +35,9 @@ if settings.DEBUG:
 urlpatterns += [
     path("admin/", admin.site.urls),
     path('api/test/', views.send_test_data),
-    path('handle_call/', views.handle_call), 
+    path('api/handle_call/', views.handle_call), 
     path('api/location/', views.location_view),
+    path('api/sendtochat/', views.send_to_chatroom, name='send_to_chatroom'),
     
 ]
 

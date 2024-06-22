@@ -153,6 +153,6 @@ CHANNEL_LAYERS = {
 }
 
 ASGI_APPLICATION = 'backend.asgi.application'
-ALLOWED_HOSTS = ['cloudwa.com.au', 'www.cloudwa.com.au', "3.104.35.160"]
+ALLOWED_HOSTS = ['cloudwa.com.au', 'www.cloudwa.com.au', "3.104.35.160", "localhost"]
 
 
