@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import axios from 'axios';
-import ChatBox from "@/components/ChatBox";
+
+const ChatBox = dynamic(() => import('../components/ChatBox'), {
+  ssr: false,
+});
+
+
 const Reportchat: React.FC = () => {
   const [location, setLocation] = useState<{ latitude: number, longitude: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
