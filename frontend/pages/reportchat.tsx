@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import axios from 'axios';
-import Chat from '@/components/Chat';
-
+import ChatBox from "@/components/ChatBox";
 const Reportchat: React.FC = () => {
   const [location, setLocation] = useState<{ latitude: number, longitude: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +37,7 @@ const Reportchat: React.FC = () => {
     <div className="flex items-start justify-center h-screen">
       <div className="w-full max-w-4xl text-center">
         <h2 className="text-xl font-bold mb-4 text-center">Incident Report Chat</h2>
-        <Chat username="Caller" />
+        <ChatBox />
         <button 
           onClick={sendLocation} 
           className="mt-4 p-2 bg-blue-500 text-white rounded">
