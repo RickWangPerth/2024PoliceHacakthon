@@ -3,6 +3,8 @@ export const generatePoliceCarInfo = (data: any) => `
     <h3 style="margin: 0; padding: 5px 10px; font-size: 16px; color: #1976d2;">${data.title}</h3>
     <p style="margin: 0; padding: 5px 10px; font-size: 14px;"> <strong>Number of officers:</strong> ${data.officers}</p>
     <p style="margin: 0; padding: 5px 10px; font-size: 14px;"> <strong>Status:</strong> ${data.status}</p>
+    <p style="margin: 0; padding: 5px 10px; font-size: 14px;"> <strong>Capability:</strong> ${data.level}</p>
+    <p style="margin: 0; padding: 5px 10px; font-size: 14px;"> <strong>Assigned to:</strong> ${data.assignTo}</p>
   </div>
 `;
 
@@ -12,7 +14,7 @@ export const generateEmergencyPointInfo = (data: any) => `
     <p style="margin: 0; padding: 5px 10px; font-size: 14px;"> <strong>ID:</strong> ${data.id}</p>
     <p style="margin: 0; padding: 5px 10px; font-size: 14px;"> <strong>Incident:</strong> ${data.incident}</p>
     <p style="margin: 0; padding: 5px 10px; font-size: 14px;"> <strong>Report time:</strong> ${data.time}</p>
-    
+    <p style="margin: 0; padding: 5px 10px; font-size: 14px;"> <strong>Status:</strong> ${data.status}</p>
     <p style="margin: 0; padding: 5px 10px; font-size: 14px;"> <strong>Link:</strong> 
       <a href="/accident/${data.id}" class="text-blue-500 hover:underline">More details</a>
     </p>
