@@ -12,15 +12,16 @@ import json
 
 @csrf_exempt
 def send_to_chatroom(request):
-    print("reques.method is:",request.method)
-    print("request.headers is", request.headers)
     if request.method == 'POST':
         data = json.loads(request.body)
         print(data)
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            'chat',  
-            data
+            'chat',
+            {
+                'type': 'chat_message',
+                'message': json.dumps(data),
+            }
         )
         return JsonResponse({'status': 'success'})
     else:
