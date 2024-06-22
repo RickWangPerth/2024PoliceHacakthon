@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  env: {
-    BACKEND_API_URL: 'http://localhost:8000'
-  }
-};
-
-export default nextConfig;
+    env: {
+      NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    },
+  };
+  
+  export default nextConfig;
+  
