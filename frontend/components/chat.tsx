@@ -11,7 +11,7 @@ const Chat: React.FC<ChatProps> = ({ username }) => {
     const [input, setInput] = useState('');
 
     useEffect(() => {
-        const socket = new WebSocket(`wss://${window.location.host}/api/chat/`);
+        const socket = new WebSocket(`ws://${window.location.host}/api/ws/chat/`);
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
             setMessages(prev => [...prev, data]);
