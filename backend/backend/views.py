@@ -63,7 +63,7 @@ def handle_call(request):
     send_sms(from_number)
 
     response = VoiceResponse()
-    response.say("Thank you for calling. You will receive an SMS shortly.")
+    response.say("Thank you for calling 000. You will receive an SMS shortly.")
     return HttpResponse(str(response), content_type='text/xml')
 
 def send_sms(to_number):
