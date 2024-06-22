@@ -2,8 +2,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import emergencyPoints from '../../dummydata/emergencyPoints';
-import Chat from '@/components/chat';
-
+import Chat from '@/components/Chat';
 const AccidentMap = dynamic(() => import('../../components/AccidentMap'), {
   ssr: false,
 });
