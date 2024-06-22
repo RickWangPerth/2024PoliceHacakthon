@@ -9,7 +9,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import os
 import json
-
+@csrf_exempt
 def send_to_chatroom(request):
     print("request.method is", request.method)
     if request.method == 'POST':
