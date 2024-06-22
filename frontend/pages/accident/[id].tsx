@@ -10,7 +10,7 @@ const AccidentMap = dynamic(() => import('../../components/AccidentMap'), {
 
 interface EmergencyData {
   title: string;
-  id: number;
+  id: string;
   incident: string;
   time: string;
   position: { lat: number; lng: number };
@@ -24,9 +24,19 @@ const AccidentPage: React.FC = () => {
   useEffect(() => {
     if (id) {
       console.log("ID:", id);
-      const point = emergencyPoints.find(point => point.data.id === Number(id));
+      const point = emergencyPoints.find(point => point.data.id === id);
       console.log("Point:", point);
-      setData(point ? { ...point.data, position: point.position } : null);
+      if (point) {
+        setData({
+          title: point.data.title,
+          id: point.data.id,
+          incident: point.data.incident,
+          time: point.data.time,
+          position: point.position
+        });
+      } else {
+        setData(null);
+      }
     }
   }, [id]);
 
