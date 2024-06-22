@@ -151,4 +151,6 @@ CHANNEL_LAYERS = {
 }
 
 ASGI_APPLICATION = 'backend.asgi.application'
+ALLOWED_HOSTS = ['cloudwa.com.au', 'www.cloudwa.com.au']
+
 
