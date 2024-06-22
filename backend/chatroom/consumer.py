@@ -2,6 +2,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        self.channel_name = "chatroom_demo"
         print("WebSocket connection established, name: ", self.channel_name)
         await self.channel_layer.group_add("chat", self.channel_name)
         await self.accept()

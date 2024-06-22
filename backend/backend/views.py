@@ -16,16 +16,11 @@ def send_to_chatroom(request):
     print("request.headers is", request.headers)
     if request.method == 'POST':
         data = json.loads(request.body)
-        message = data.get('message')
         print(data)
         channel_layer = get_channel_layer()
-        message_data = {
-            'type': 'chat_message',
-            'message': message
-        }
         async_to_sync(channel_layer.group_send)(
-            'chat_group',  
-            message_data
+            'chatroom_demo',  
+            data
         )
         return JsonResponse({'status': 'success'})
     else:
