@@ -75,7 +75,7 @@ const AccidentPage: React.FC = () => {
               </div>
               <div className={`tab-pane h-5/6	 ${activeTab === 1 ? 'active' : ''}`}>
                 <h2 className="text-xl font-bold mb-4">Chat</h2>
-                <Chat/>
+                <Chat username="Caller"/>
               </div>
             </div>
         </div>

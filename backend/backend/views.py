@@ -82,3 +82,39 @@ def location_view(request):
         print(f"Received location: Latitude = {latitude}, Longitude = {longitude}")
         return JsonResponse({'status': 'success', 'latitude': latitude, 'longitude': longitude})
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+@csrf_exempt
+def incident_output_view(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        summarydata = data.get('data')
+        # 处理接收到的位置信息
+        print(f"Received incident_output_view: data = {data}")
+        
+        return JsonResponse({'status': 'success', 'data': data})
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+
+import asyncio
+import websockets
+import os
+
+async def command_receiver():
+    host = os.getenv('WEBSOCKET_HOST', 'localhost')
+    port = os.getenv('WEBSOCKET_PORT', '8000')
+    ws_url = f"wss://{host}:{port}/ws/"
+    async with websockets.connect(ws_url) as websocket:
+        
+        while True:
+            message = await websocket.recv()
+            await websocket.send("Received the command '{message}'")
+            if message == "start":
+                # run the start command
+                ...
+            elif message == "stop":
+                # run the stop command
+                ...
+            else:
+                await websocket.send("Unknown command")     
