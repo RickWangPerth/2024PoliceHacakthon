@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-interface ChatProps {
-  username: string;
-}
-
-const Chat: React.FC<ChatProps> = ({ username }) => {
+const Chat: React.FC = () => {
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<{ username: string, message: string, timestamp: string, type: 'text' | 'image' | 'audio' }[]>([]);
   const [input, setInput] = useState('');
+  const [username, setUsername] = useState<string | null>(localStorage.getItem('username'));
   const [isAskingUsername, setIsAskingUsername] = useState<boolean>(!username);
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
@@ -90,6 +87,28 @@ const Chat: React.FC<ChatProps> = ({ username }) => {
       });
     }
   };
+
+  const handleUsernameSubmit = () => {
+    localStorage.setItem('username', username!);
+    setIsAskingUsername(false);
+};
+
+if (isAskingUsername) {
+    return (
+        <div className="inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="p-5 bg-white rounded">
+                <input
+                    placeholder="Enter your username"
+                    value={username || ''}
+                    onChange={e => setUsername(e.target.value)}
+                    className="input input-bordered w-full max-w-xs shadow appearance-none border border-red-500 rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                />
+                <button onClick={handleUsernameSubmit} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
+            </div>
+        </div>
+    );
+}
+
 
   return (
     <div className='chatBox h-full flex flex-col'>
