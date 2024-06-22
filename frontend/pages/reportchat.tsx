@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
-import Chat from '@/components/chat';
 import axios from 'axios';
+import Chat from '@/components/Chat';
 
 const Reportchat: React.FC = () => {
   const [location, setLocation] = useState<{ latitude: number, longitude: number } | null>(null);
@@ -52,8 +52,7 @@ const Reportchat: React.FC = () => {
         )}
         {error && <p className="mt-4 text-red-500">{error}</p>}
       </div>
-   
-  </div>
+    </div>
   );
 };
 

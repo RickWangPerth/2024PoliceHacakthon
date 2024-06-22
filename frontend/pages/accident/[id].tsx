@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import emergencyPoints from '../../dummydata/emergencyPoints';
-import Chat from '@/components/chat';
+import Chat from '@/components/Chat';
 
 const AccidentMap = dynamic(() => import('../../components/AccidentMap'), {
   ssr: false,
@@ -76,7 +76,7 @@ const AccidentPage: React.FC = () => {
               </div>
               <div className={`tab-pane h-5/6	 ${activeTab === 1 ? 'active' : ''}`}>
                 <h2 className="text-xl font-bold mb-4">Chat</h2>
-                <Chat/>
+                <Chat username="Caller"/>
               </div>
             </div>
         </div>
