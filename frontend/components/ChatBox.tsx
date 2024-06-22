@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 const ChatBox: React.FC = () => {
     const [ws, setWs] = useState<WebSocket | null>(null);
-    const [messages, setMessages] = useState<{ username: string, message: string, timestamp: string, type: 'text' | 'image' | 'audio' }[]>([]);
+    const [messages, setMessages] = useState<{ username: string, message: string, timestamp: string, type: 'text' | 'image' | 'audio' | 'json' }[]>([]);
     const [input, setInput] = useState('');
     const [username, setUsername] = useState<string | null>(localStorage.getItem('username'));
     const [isAskingUsername, setIsAskingUsername] = useState<boolean>(!username);
