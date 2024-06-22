@@ -37,6 +37,6 @@ urlpatterns += [
     path('api/test/', views.send_test_data),
     path('handle_call/', views.handle_call), 
     path('api/location/', views.location_view),
-    
+    path('api/incident_output/', views.incident_output_view),
 ]
 
