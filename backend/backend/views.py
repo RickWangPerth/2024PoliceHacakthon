@@ -11,8 +11,10 @@ import os
 import json
 
 def send_to_chatroom(request):
+    print("request.method is", request.method)
     if request.method == 'POST':
         message = request.POST.get('message')
+        print(message)
         # 获取Channel Layer
         channel_layer = get_channel_layer()
         
