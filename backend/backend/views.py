@@ -68,7 +68,7 @@ def handle_call(request):
 
 def send_sms(to_number):
     message = client.messages.create(
-        body="Hi there. Click the link to share your location: https://www.cloudwa.com.au/emergency",
+        body="Hi there. Click the link to share your location: https://www.cloudwa.com.au/emgerency",
         from_=TWILIO_PHONE_NUMBER,
         to=to_number
     )
