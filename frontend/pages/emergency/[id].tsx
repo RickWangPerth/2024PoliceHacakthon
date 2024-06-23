@@ -28,57 +28,56 @@ const EmergencyPage: React.FC = () => {
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setLocation({ latitude, longitude });
-          setPrevLocation({ latitude, longitude });
-          setStartTime(Date.now());
-
-          const sendLocationData = () => {
-            
-            const currentTime = Date.now();
-            const elapsedTime = currentTime - startTime!;
-            const heading = calculateHeading(prevLocation, { latitude, longitude });
-            const altitude = position.coords.altitude || 0;
-            const tag = elapsedTime === 0 ? 'first' : 'following';
-            const distance = calculateDistance(prevLocation, { latitude, longitude }, tag);
-            const speed = calculateSpeed(distance, elapsedTime);
-
-
-
-
-            const sender = "reporter_"+id;
-
-            axios.post(`https://${window.location.host}/api/location/`, {
-              latitude,
-              longitude,
-              altitude,
-              heading,
-              totalTime: elapsedTime,
-              speed,
-              totalDistance: totalDistance + distance,
-              tag,
-              sender,
-            })
-              .then(response => {
-                // console.log('Location sent successfully:', response.data);
-              })
-              .catch(error => {
-                console.error('Error sending location:', error);
-              });
-
+      if (id) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            setLocation({ latitude, longitude });
             setPrevLocation({ latitude, longitude });
-            setTotalDistance(totalDistance + distance);
-          };
+            setStartTime(Date.now());
 
-          const intervalId = setInterval(sendLocationData, 5000);
-          setIntervalId(intervalId);
-        },
-        error => {
-          console.error('Error getting location:', error);
+            const sendLocationData = () => {
+              
+              const currentTime = Date.now();
+              const elapsedTime = currentTime - startTime!;
+              const heading = calculateHeading(prevLocation, { latitude, longitude });
+              const altitude = position.coords.altitude || 0;
+              const tag = elapsedTime === 0 ? 'first' : 'following';
+              const distance = calculateDistance(prevLocation, { latitude, longitude }, tag);
+              const speed = calculateSpeed(distance, elapsedTime);
+
+              const sender = "reporter_"+id;
+
+              axios.post(`https://${window.location.host}/api/location/`, {
+                latitude,
+                longitude,
+                altitude,
+                heading,
+                totalTime: elapsedTime,
+                speed,
+                totalDistance: totalDistance + distance,
+                tag,
+                sender,
+              })
+                .then(response => {
+                  // console.log('Location sent successfully:', response.data);
+                })
+                .catch(error => {
+                  console.error('Error sending location:', error);
+                });
+
+              setPrevLocation({ latitude, longitude });
+              setTotalDistance(totalDistance + distance);
+            };
+
+            const intervalId = setInterval(sendLocationData, 5000);
+            setIntervalId(intervalId);
+          },
+          error => {
+            console.error('Error getting location:', error);
+          }
+        );
         }
-      );
     } else {
       console.error('Geolocation is not supported by this browser.');
     }
@@ -88,7 +87,7 @@ const EmergencyPage: React.FC = () => {
         clearInterval(intervalId);
       }
     };
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (id) {
@@ -188,7 +187,7 @@ const EmergencyPage: React.FC = () => {
               </div>
               <div className={`tab-pane h-5/6	 ${activeTab === 2 ? 'active' : ''}`}>
                 <h2 className="text-xl font-bold mb-4">Chat</h2>
-                  <ReporterMap />
+                  <ReporterMap caseId = {id} />
               </div>
 
             </div>

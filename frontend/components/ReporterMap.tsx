@@ -1,65 +1,133 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const ReporterMap: React.FC = () => {
+interface ReporterMapProps {
+    caseId: number;
+}
+
+const ReporterMap: React.FC<ReporterMapProps> = ({ caseId }) => {
     const [ws, setWs] = useState<WebSocket | null>(null);
     const [messages, setMessages] = useState<{ username: string, message: string, timestamp: string, type: 'location' }[]>([]);
-    const [username, setUsername] = useState<string | null>(localStorage.getItem('username'));
-    const [isAskingUsername, setIsAskingUsername] = useState<boolean>(!username);
 
     useEffect(() => {
-        if (username) {
-            const socket = new WebSocket(`wss://cloudwa.com.au/api/ws/chat/`);
-            socket.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                if (data.type === 'location') {
-                    setMessages(prev => [...prev, data]);
+        const socket = new WebSocket(`wss://cloudwa.com.au/api/ws/chat/`);
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'location') {
+                setMessages(prev => [...prev, data]);
+            }
+        };
+        setWs(socket);
+
+        return () => {
+            socket.close();
+        };
+    }, [ caseId]);
+    const mapRef = useRef<HTMLDivElement | null>(null);
+    const [map, setMap] = useState<google.maps.Map | null>(null);
+    const [paths, setPaths] = useState<{ [sender: string]: google.maps.LatLng[] }>({});
+    const [colors, setColors] = useState<{ [sender: string]: string }>({});
+
+    useEffect(() => {
+        if (messages.length > 0) {
+            const lastMessage = messages[messages.length - 1];
+            const pairs = lastMessage.message.split('**');
+            const keyValuePairs = pairs.map(pair => pair.split('##'));
+
+            const latitudeValue = keyValuePairs.find(([key]) => key === 'Latitude')?.[1];
+            const longitudeValue = keyValuePairs.find(([key]) => key === 'Longitude')?.[1];
+            const sender = keyValuePairs.find(([key]) => key === 'Sender')?.[1];
+
+            if (latitudeValue && longitudeValue && sender) {
+                const lat = parseFloat(latitudeValue);
+                const lng = parseFloat(longitudeValue);
+                const newPosition = new google.maps.LatLng(lat, lng);
+
+                setPaths(prevPaths => ({
+                    ...prevPaths,
+                    [sender]: [...(prevPaths[sender] || []), newPosition],
+                }));
+
+                if (!colors[sender]) {
+                    const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+                    setColors(prevColors => ({ ...prevColors, [sender]: randomColor }));
                 }
-            };
-            setWs(socket);
-
-            return () => {
-                socket.close();
-            };
+            }
         }
-    }, [username]);
+    }, [messages]);
 
-    const handleUsernameSubmit = () => {
-        localStorage.setItem('username', username!);
-        setIsAskingUsername(false);
-    };
+    useEffect(() => {
+        const initMap = () => {
+            if (mapRef.current && !map) {
+                const newMap = new google.maps.Map(mapRef.current, {
+                    center: { lat: 0, lng: 0 },
+                    zoom: 8,
+                });
+                setMap(newMap);
+            }
+        };
 
-    if (isAskingUsername) {
-        return (
-            <div className="inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                <div className="p-5 bg-white rounded">
-                    <input
-                        placeholder="Enter your username"
-                        value={username || ''}
-                        onChange={e => setUsername(e.target.value)}
-                        className="input input-bordered w-full max-w-xs shadow appearance-none border border-red-500 rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                    />
-                    <button onClick={handleUsernameSubmit} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
-                </div>
-            </div>
-        );
-    }
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&callback=initMap`;
+        script.async = true;
+        script.defer = true;
+        (window as any).initMap = initMap;
+        document.head.appendChild(script);
+
+        return () => {
+            document.head.removeChild(script);
+            delete (window as any).initMap;
+        };
+    }, [map]);
+
+    useEffect(() => {
+        if (map) {
+            const bounds = new google.maps.LatLngBounds();
+
+            Object.entries(paths).forEach(([sender, path]) => {
+                if (path.length > 0) {
+                    const color = colors[sender];
+
+                    path.forEach(position => bounds.extend(position));
+
+                    const polyline = new google.maps.Polyline({
+                        path: path,
+                        strokeColor: color,
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2,
+                    });
+                    polyline.setMap(map);
+                }
+            });
+
+            if (!bounds.isEmpty()) {
+                map.fitBounds(bounds);
+            }
+        }
+    }, [map, paths, colors]);
+
+
+
+
 
     return (
         <div className='locationBox h-full flex flex-col'>
             <div className='locationBox_div flex-1 overflow-y-auto'>
                 {messages.map((msg, index) => (
-                    <div key={index} className={`locationItem_div p-2 m-5 w-10/12 rounded-lg ${msg.username === username ? 'ml-auto bg-blue-100' : 'mr-auto bg-green-100'}`}>
-                        <p className='locationItem_header font-bold'>
-                            {msg.username} ({msg.timestamp})
-                        </p>
-                        <div className='locationItem_content'>
-                            <a className='blue-600 underline' href={`https://www.google.com.au/maps/search/${msg.message.replace(/ /g, '+')}`} target="_blank" rel="noopener noreferrer">
-                                {msg.message}
-                            </a>
-                        </div>
-                    </div>
+                    <div className='chatItem_location'>
+                    {(() => {
+                        const pairs = msg.message.split('**');
+                        const keyValuePairs = pairs.map(pair => pair.split('##'));
+
+                        return keyValuePairs.map(([key, value], pairIndex) => (
+                            <p key={pairIndex}>
+                                <strong>{key}:</strong> : {value}
+                            </p>
+                        ));
+                    })()}
+                </div>            
                 ))}
             </div>
+            <div ref={mapRef} style={{ height: '400px', width: '100%' }}></div>
         </div>
     );
 };
