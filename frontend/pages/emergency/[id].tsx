@@ -3,8 +3,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import emergencyPoints from '../../dummydata/emergencyPoints';
-import ChatBox from '@/components/ChatBox';
-const AccidentMap = dynamic(() => import('../../components/AccidentMap'), {
+import ReporterMap from '@/components/ReporterMap';
+const ChatBox = dynamic(() => import('../../components/ChatBox'), {
   ssr: false,
 });
 
@@ -62,7 +62,7 @@ const EmergencyPage: React.FC = () => {
               sender,
             })
               .then(response => {
-                console.log('Location sent successfully:', response.data);
+                // console.log('Location sent successfully:', response.data);
               })
               .catch(error => {
                 console.error('Error sending location:', error);
@@ -94,7 +94,6 @@ const EmergencyPage: React.FC = () => {
     if (id) {
       console.log("ID:", id);
       const point = emergencyPoints.find(point => point.data.id === id);
-      console.log("Point:", point);
       if (point) {
         setData({
           title: point.data.title,
@@ -164,7 +163,7 @@ const EmergencyPage: React.FC = () => {
       <div className="col-span-2 bg-gray-100 p-4 mx-2 my-4 rounded-lg">
         <div className="tab h-full">
             <ul className="tab-list">
-              {['OverView', 'Chat', 'Map'].map((tab, index) => (
+              {['OverView', 'Chat', 'Map (Sharing 🟢)'].map((tab, index) => (
                 <li
                   key={tab}
                   className={`tab-item ${index === activeTab ? 'active' : ''}`}
@@ -189,8 +188,9 @@ const EmergencyPage: React.FC = () => {
               </div>
               <div className={`tab-pane h-5/6	 ${activeTab === 2 ? 'active' : ''}`}>
                 <h2 className="text-xl font-bold mb-4">Chat</h2>
-                  <AccidentMap position={data.position} />
+                  <ReporterMap />
               </div>
+
             </div>
         </div>
       </div>
