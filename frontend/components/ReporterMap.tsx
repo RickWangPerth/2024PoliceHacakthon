@@ -80,40 +80,43 @@ const ReporterMap: React.FC<ReporterMapProps> = ({ caseId }) => {
     }, [map]);
 
     useEffect(() => {
-    if (map) {
-        const bounds = new google.maps.LatLngBounds();
-        let validBounds = false;
+        if (map) {
+            const bounds = new google.maps.LatLngBounds();
+            let validBounds = false;
 
-        Object.entries(paths).forEach(([sender, path]) => {
-            if (path.length > 0) {
-                const color = colors[sender];
+            Object.entries(paths).forEach(([sender, path]) => {
+                console.log('Sender:', sender);
+                console.log('Path:', path);
+            
+                if (path.length > 0) {
+                    const color = colors[sender];
+            
+                    path.forEach(position => {
+                        if (position instanceof google.maps.LatLng) {
+                            bounds.extend(position);
+                            validBounds = true;
+                        }
+                    });
+            
+                    const polyline = new google.maps.Polyline({
+                        path: path,
+                        strokeColor: color,
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2,
+                    });
+                    polyline.setMap(map);
+                }
+            });
 
-                path.forEach(position => {
-                    if (position instanceof google.maps.LatLng) {
-                        bounds.extend(position);
-                        validBounds = true;
-                    }
-                });
-
-                const polyline = new google.maps.Polyline({
-                    path: path,
-                    strokeColor: color,
-                    strokeOpacity: 1.0,
-                    strokeWeight: 2,
-                });
-                polyline.setMap(map);
-            }
-        });
-
-        if (validBounds) {
-            try {
-                map.fitBounds(bounds);
-            } catch (error) {
-                console.error('Error fitting bounds:', error);
+            if (validBounds) {
+                try {
+                    map.fitBounds(bounds);
+                } catch (error) {
+                    console.error('Error fitting bounds:', error);
+                }
             }
         }
-    }
-}, [map, paths, colors]);
+    }, [map, paths, colors]);   
 
 
 
@@ -121,6 +124,7 @@ const ReporterMap: React.FC<ReporterMapProps> = ({ caseId }) => {
 
     return (
         <div className='locationBox h-full flex flex-col'>
+            <div ref={mapRef} style={{ height: '400px', width: '100%' }}></div>
             <div className='locationBox_div flex-1 overflow-y-auto'>
                 {messages.map((msg, index) => (
                     <div className='chatItem_location'>
@@ -137,7 +141,7 @@ const ReporterMap: React.FC<ReporterMapProps> = ({ caseId }) => {
                 </div>            
                 ))}
             </div>
-            <div ref={mapRef} style={{ height: '400px', width: '100%' }}></div>
+            
         </div>
     );
 };
