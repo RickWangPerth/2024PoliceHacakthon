@@ -36,22 +36,29 @@ const EmergencyPage: React.FC = () => {
           setStartTime(Date.now());
 
           const sendLocationData = () => {
+            
             const currentTime = Date.now();
             const elapsedTime = currentTime - startTime!;
-            const distance = calculateDistance(prevLocation, { latitude, longitude });
             const speed = calculateSpeed(distance, elapsedTime);
             const heading = calculateHeading(prevLocation, { latitude, longitude });
-
+            const altitude = position.coords.altitude || 0;
             const tag = elapsedTime === 0 ? 'first' : 'following';
+            const distance = calculateDistance(prevLocation, { latitude, longitude }, tag);
+
+
+
+            const sender = "reporter_"+id;
 
             axios.post(`https://${window.location.host}/api/location/`, {
               latitude,
               longitude,
+              altitude,
               heading,
               totalTime: elapsedTime,
               speed,
               totalDistance: totalDistance + distance,
               tag,
+              sender,
             })
               .then(response => {
                 console.log('Location sent successfully:', response.data);
@@ -107,17 +114,22 @@ const EmergencyPage: React.FC = () => {
     setActiveTab(index);
   };
 
-  const calculateDistance = (prevLocation: { latitude: number; longitude: number }, currentLocation: { latitude: number; longitude: number }) => {
-    const R = 6371; // 地球半径，单位为千米
-    const dLat = toRadians(currentLocation.latitude - prevLocation.latitude);
-    const dLon = toRadians(currentLocation.longitude - prevLocation.longitude);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRadians(prevLocation.latitude)) * Math.cos(toRadians(currentLocation.latitude)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c;
-    return distance;
+  const calculateDistance = (prevLocation: { latitude: number; longitude: number }, currentLocation: { latitude: number; longitude: number } , tag) => {
+    if (tag == "following"){
+      const R = 6371; // 地球半径，单位为千米
+      const dLat = toRadians(currentLocation.latitude - prevLocation.latitude);
+      const dLon = toRadians(currentLocation.longitude - prevLocation.longitude);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRadians(prevLocation.latitude)) * Math.cos(toRadians(currentLocation.latitude)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c;
+      return distance;
+    }
+    else{
+      return 0;
+    }
   };
   
   const toRadians = (degrees: number) => {

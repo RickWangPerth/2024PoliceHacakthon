@@ -7,6 +7,7 @@ from twilio.twiml.voice_response import VoiceResponse
 from twilio.rest import Client
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from datetime import datetime
 import os
 import json
 
@@ -80,8 +81,40 @@ def location_view(request):
         speed = data.get('speed')
         total_distance = data.get('totalDistance')
         tag = data.get('tag')
+        sender = data.get('sender')
+        altitude = data.get('altitude') 
 
-        # 处理接收到的位置信息
+        message_data = {
+            'username': 'SYSTEM',
+            'message': {
+                'Latitude': latitude,
+                'Longitude': longitude,
+                'Heading': heading,
+                'Total Time': total_time,
+                'Speed': speed,
+                'Total Distance': total_distance,
+                'Tag': tag,
+                'Sender': sender,
+                'Altitude': altitude,
+            },
+            'timestamp': datetime.now().strftime('%d/%m/%Y, %H:%M:%S'),
+            'type': 'location'
+        }
+        
+        data = json.loads(data)
+        data['message'] = convert_data_to_string(data['message'])
+
+        channel_layer = get_channel_layer()
+
+        async_to_sync(channel_layer.group_send)(
+            'chat',
+            {
+                'type': 'chat_message',
+                'message': json.dumps(message_data),
+            }
+        )
+        
+
         print(f"Received location data:")
         print(f"Latitude: {latitude}")
         print(f"Longitude: {longitude}")
@@ -90,6 +123,8 @@ def location_view(request):
         print(f"Speed: {speed}")
         print(f"Total Distance: {total_distance}")
         print(f"Tag: {tag}")
+        print(f"Sender: {sender}")
+        print(f"Altitude: {altitude}")  
 
         return JsonResponse({
             'status': 'success',
@@ -99,10 +134,11 @@ def location_view(request):
             'totalTime': total_time,
             'speed': speed,
             'totalDistance': total_distance,
-            'tag': tag
+            'tag': tag,
+            'sender': sender,
+            'altitude': altitude  # 返回海拔高度数据
         })
     return JsonResponse({'error': 'Invalid request method'}, status=400)
-
 # @csrf_exempt
 # def location_view(request):
 #     if request.method == 'POST':

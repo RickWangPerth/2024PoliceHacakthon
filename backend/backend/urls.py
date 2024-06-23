@@ -38,7 +38,7 @@ urlpatterns += [
     path('api/handle_call/', views.handle_call), 
     path('api/location/', views.location_view),
     path('api/sendtochat/', views.send_to_chatroom, name='send_to_chatroom'),
-    
+
     path('api/incident_output/', views.incident_output_view),
 ]
 
