@@ -64,7 +64,7 @@ def handle_call(request):
 
 def send_sms(to_number):
     message = client.messages.create(
-        body="Hi there. Click the link to share your location: https://www.cloudwa.com.au/emergency",
+        body="Hi there. Click the link to share your location: https://www.cloudwa.com.au/emergency/EP002",
         from_=TWILIO_PHONE_NUMBER,
         to=to_number
     )
@@ -101,7 +101,7 @@ def location_view(request):
             'type': 'location'
         }
         
-        data['message'] = convert_data_to_string(data['message'])
+        message_data['message'] = convert_data_to_string(message_data['message'])
 
         channel_layer = get_channel_layer()
 
