@@ -115,7 +115,7 @@ const EmergencyPage: React.FC = () => {
     setActiveTab(index);
   };
 
-  const calculateDistance = (prevLocation: { latitude: number; longitude: number }, currentLocation: { latitude: number; longitude: number } , tag) => {
+  const calculateDistance = (prevLocation: { latitude: number; longitude: number }, currentLocation: { latitude: number; longitude: number } , tag: string) => {
     if (tag == "following"){
       const R = 6371; // 地球半径，单位为千米
       const dLat = toRadians(currentLocation.latitude - prevLocation.latitude);
