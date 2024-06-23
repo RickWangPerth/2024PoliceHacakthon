@@ -80,30 +80,36 @@ const ReporterMap: React.FC<ReporterMapProps> = ({ caseId }) => {
     }, [map]);
 
     useEffect(() => {
-        if (map) {
-            const bounds = new google.maps.LatLngBounds();
+    if (map) {
+        const bounds = new google.maps.LatLngBounds();
+        let validBounds = false;
 
-            Object.entries(paths).forEach(([sender, path]) => {
-                if (path.length > 0) {
-                    const color = colors[sender];
+        Object.entries(paths).forEach(([sender, path]) => {
+            if (path.length > 0) {
+                const color = colors[sender];
 
-                    path.forEach(position => bounds.extend(position));
+                path.forEach(position => {
+                    if (position instanceof google.maps.LatLng) {
+                        bounds.extend(position);
+                        validBounds = true;
+                    }
+                });
 
-                    const polyline = new google.maps.Polyline({
-                        path: path,
-                        strokeColor: color,
-                        strokeOpacity: 1.0,
-                        strokeWeight: 2,
-                    });
-                    polyline.setMap(map);
-                }
-            });
-
-            if (!bounds.isEmpty()) {
-                map.fitBounds(bounds);
+                const polyline = new google.maps.Polyline({
+                    path: path,
+                    strokeColor: color,
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2,
+                });
+                polyline.setMap(map);
             }
+        });
+
+        if (validBounds) {
+            map.fitBounds(bounds);
         }
-    }, [map, paths, colors]);
+    }
+}, [map, paths, colors]);
 
 
 
