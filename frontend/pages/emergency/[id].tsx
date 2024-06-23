@@ -187,7 +187,7 @@ const EmergencyPage: React.FC = () => {
               </div>
               <div className={`tab-pane h-5/6	 ${activeTab === 2 ? 'active' : ''}`}>
                 <h2 className="text-xl font-bold mb-4">Chat</h2>
-                  <ReporterMap caseId = {id} />
+                  <ReporterMap caseId = {id as string} />
               </div>
 
             </div>
