@@ -101,7 +101,6 @@ def location_view(request):
             'type': 'location'
         }
         
-        data = json.loads(data)
         data['message'] = convert_data_to_string(data['message'])
 
         channel_layer = get_channel_layer()
