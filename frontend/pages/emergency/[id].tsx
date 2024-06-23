@@ -17,36 +17,72 @@ interface EmergencyData {
 }
 
 const EmergencyPage: React.FC = () => {
-
   const router = useRouter();
   const { id } = router.query;
   const [data, setData] = useState<EmergencyData | null>(null);
   const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
+  const [prevLocation, setPrevLocation] = useState({ latitude: 0, longitude: 0 });
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [totalDistance, setTotalDistance] = useState(0);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition((position) => {
-              const { latitude, longitude } = position.coords;
-              setLocation({ latitude, longitude });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLocation({ latitude, longitude });
+          setPrevLocation({ latitude, longitude });
+          setStartTime(Date.now());
 
-    
+          const sendLocationData = () => {
+            const currentTime = Date.now();
+            const elapsedTime = currentTime - startTime!;
+            const distance = calculateDistance(prevLocation, { latitude, longitude });
+            const speed = calculateSpeed(distance, elapsedTime);
+            const heading = calculateHeading(prevLocation, { latitude, longitude });
 
-        axios.post(`https://${window.location.host}/api/location/`, { latitude, longitude })
-          .then(response => {
-            console.log('Location sent successfully:', response.data);
-          })
-          .catch(error => {
-            console.error('Error sending location:', error);
-          });
-      },
-      error => {
-        console.error('Error getting location:', error);
-      }
-    );
+            const tag = elapsedTime === 0 ? 'first' : 'following';
+
+            axios.post(`https://${window.location.host}/api/location/`, {
+              latitude,
+              longitude,
+              heading,
+              totalTime: elapsedTime,
+              speed,
+              totalDistance: totalDistance + distance,
+              tag,
+            })
+              .then(response => {
+                console.log('Location sent successfully:', response.data);
+              })
+              .catch(error => {
+                console.error('Error sending location:', error);
+              });
+
+            setPrevLocation({ latitude, longitude });
+            setTotalDistance(totalDistance + distance);
+          };
+
+          const intervalId = setInterval(sendLocationData, 5000);
+          setIntervalId(intervalId);
+        },
+        error => {
+          console.error('Error getting location:', error);
+        }
+      );
     } else {
-    console.error('Geolocation is not supported by this browser.');
+      console.error('Geolocation is not supported by this browser.');
     }
 
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (id) {
       console.log("ID:", id);
       const point = emergencyPoints.find(point => point.data.id === id);
@@ -69,6 +105,41 @@ const EmergencyPage: React.FC = () => {
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);
+  };
+
+  const calculateDistance = (prevLocation: { latitude: number; longitude: number }, currentLocation: { latitude: number; longitude: number }) => {
+    const R = 6371; // 地球半径，单位为千米
+    const dLat = toRadians(currentLocation.latitude - prevLocation.latitude);
+    const dLon = toRadians(currentLocation.longitude - prevLocation.longitude);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRadians(prevLocation.latitude)) * Math.cos(toRadians(currentLocation.latitude)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+    return distance;
+  };
+  
+  const toRadians = (degrees: number) => {
+    return degrees * Math.PI / 180;
+  };
+  
+  const calculateSpeed = (distance: number, elapsedTime: number) => {
+    const speed = distance / (elapsedTime / 1000 / 3600); // 转换为千米/小时
+    return speed;
+  };
+  
+  const calculateHeading = (prevLocation: { latitude: number; longitude: number }, currentLocation: { latitude: number; longitude: number }) => {
+    const dLon = toRadians(currentLocation.longitude - prevLocation.longitude);
+    const y = Math.sin(dLon) * Math.cos(toRadians(currentLocation.latitude));
+    const x = Math.cos(toRadians(prevLocation.latitude)) * Math.sin(toRadians(currentLocation.latitude)) -
+      Math.sin(toRadians(prevLocation.latitude)) * Math.cos(toRadians(currentLocation.latitude)) * Math.cos(dLon);
+    const heading = toDegrees(Math.atan2(y, x));
+    return (heading + 360) % 360; // 将负值转换为正值，范围为 0-360 度
+  };
+  
+  const toDegrees = (radians: number) => {
+    return radians * 180 / Math.PI;
   };
 
   if (!data) {
