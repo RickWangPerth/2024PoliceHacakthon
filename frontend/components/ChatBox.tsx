@@ -116,48 +116,53 @@ const ChatBox: React.FC = () => {
     return (
         <div className='chatBox h-full flex flex-col'>
             <div className='chatBox_div flex-1 overflow-y-auto'>
-            {messages.map((msg, index) => (
-                <div key={index} className={`chatItem_div p-2 m-5 w-10/12 rounded-lg ${msg.username === username ? 'ml-auto bg-blue-100' : 'mr-auto bg-green-100'}`}>
-                    <p className='chatItem_header font-bold'>
-                        {msg.username} ({msg.timestamp})
-                    </p>
-                    {msg.type === 'text' && (
-                        <p className='chatItem_content'>{msg.message}</p>
-                    )}
-                    {msg.type === 'image' && (
-                        <img src={msg.message} alt="User uploaded" className="max-w-full" />
-                    )}
-                    {msg.type === 'audio' && (
-                        <audio src={msg.message} controls />
-                    )}
-                    {msg.type === 'json' && (
-                        <div className='chatItem_json'>
-                            {(() => {
-                                const pairs = msg.message.split('**');
-                                const keyValuePairs = pairs.map(pair => pair.split('##'));
-                                const whereIndex = keyValuePairs.findIndex(([key]) => key === 'Where');
+            {messages.map((msg, index) => {
+            if (msg.type === 'text' || msg.type === 'image' || msg.type === 'audio' || msg.type === 'json') {
+                return (
+                    <div key={index} className={`chatItem_div p-2 m-5 w-10/12 rounded-lg ${msg.username === username ? 'ml-auto bg-blue-100' : 'mr-auto bg-green-100'}`}>
+                        <p className='chatItem_header font-bold'>
+                            {msg.username} ({msg.timestamp})
+                        </p>
+                        {msg.type === 'text' && (
+                            <p className='chatItem_content'>{msg.message}</p>
+                        )}
+                        {msg.type === 'image' && (
+                            <img src={msg.message} alt="User uploaded" className="max-w-full" />
+                        )}
+                        {msg.type === 'audio' && (
+                            <audio src={msg.message} controls />
+                        )}
+                        {msg.type === 'json' && (
+                            <div className='chatItem_json'>
+                                {(() => {
+                                    const pairs = msg.message.split('**');
+                                    const keyValuePairs = pairs.map(pair => pair.split('##'));
+                                    const whereIndex = keyValuePairs.findIndex(([key]) => key === 'Where');
 
-                                if (whereIndex === -1) {
-                                    keyValuePairs.push(['Where', 'UNKNOWN']);
-                                }
+                                    if (whereIndex === -1) {
+                                        keyValuePairs.push(['Where', 'UNKNOWN']);
+                                    }
 
-                                return keyValuePairs.map(([key, value], pairIndex) => (
-                                    <p key={pairIndex}>
-                                        <strong>{key}:</strong> {key === 'Where' ? (
-                                            <a className='blue-600 underline' href={`https://www.google.com.au/maps/search/${value.replace(/ /g, '+')}`} target="_blank" rel="noopener noreferrer">
-                                                {value}
-                                            </a>
-                                        ) : (
-                                            value
-                                        )}
-                                    </p>
-                                ));
-                            })()}
-                        </div>
-                    )}
-                    
-                </div>
-            ))}
+                                    return keyValuePairs.map(([key, value], pairIndex) => (
+                                        <p key={pairIndex}>
+                                            <strong>{key}:</strong> {key === 'Where' ? (
+                                                <a className='blue-600 underline' href={`https://www.google.com.au/maps/search/${value.replace(/ /g, '+')}`} target="_blank" rel="noopener noreferrer">
+                                                    {value}
+                                                </a>
+                                            ) : (
+                                                value
+                                            )}
+                                        </p>
+                                    ));
+                                })()}
+                            </div>
+                        )}
+                    </div>
+                );
+            } else {
+                return null;
+            }
+        })}
             </div>
             <div className='chatBox_input p-5 m-5 inset-x-0 bottom-0 bg-white flex items-center'>
                 <input
