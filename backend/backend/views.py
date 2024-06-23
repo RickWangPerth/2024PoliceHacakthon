@@ -11,7 +11,7 @@ import os
 import json
 
 def convert_data_to_string(data):
-    return '**'.join([f"{key}##{value}" for key, value in data.items()])
+    return '*_*_*'.join([f"{key}*_*_*{value}" for key, value in data.items()])
 
 @csrf_exempt
 def send_to_chatroom(request):
