@@ -12,7 +12,9 @@ const ChatBox: React.FC = () => {
 
     useEffect(() => {
         if (username) {
-            const socket = new WebSocket(`wss://${window.location.host}/api/ws/chat/`);
+            
+            const socket = new WebSocket(`wss://cloudwa.com.au/api/ws/chat/`);
+            //const socket = new WebSocket(`wss://${window.location.host}/api/ws/chat/`);
             //const socket = new WebSocket(`ws://localhost:8000/api/ws/chat/`);
             socket.onmessage = (event) => {
                 const data = JSON.parse(event.data);
@@ -129,18 +131,11 @@ const ChatBox: React.FC = () => {
                         <audio src={msg.message} controls />
                     )}
                     {msg.type === 'json' && (
-                        <div>
-                            {(() => {
-                                const tempData = JSON.parse(msg.message);
-                                return <p>msg.message</p>
-                                // return Object.entries(tempData.data).map(([key, value]) => (
-                                //     <p key={key}>
-                                //         <strong>{key}:</strong> {value}
-                                //     </p>
-                                // ));
-                            })()}
+                        <div className='chatItem_json'>
+                            <pre>{JSON.stringify(JSON.parse(msg.message), null, 2)}</pre>
                         </div>
                     )}
+                    
                 </div>
             ))}
             </div>

@@ -10,6 +10,9 @@ from asgiref.sync import async_to_sync
 import os
 import json
 
+def convert_data_to_string(data):
+    return '**'.join([f"{key}##{value}" for key, value in data.items()])
+
 @csrf_exempt
 def send_to_chatroom(request):
     if request.method == 'POST':
@@ -20,7 +23,7 @@ def send_to_chatroom(request):
             'chat',
             {
                 'type': 'chat_message',
-                'message': json.dumps(data),
+                'message': convert_data_to_string(data),
             }
         )
         return JsonResponse({'status': 'success'})
