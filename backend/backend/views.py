@@ -75,10 +75,44 @@ def location_view(request):
         data = json.loads(request.body)
         latitude = data.get('latitude')
         longitude = data.get('longitude')
+        heading = data.get('heading')
+        total_time = data.get('totalTime')
+        speed = data.get('speed')
+        total_distance = data.get('totalDistance')
+        tag = data.get('tag')
+
         # 处理接收到的位置信息
-        print(f"Received location: Latitude = {latitude}, Longitude = {longitude}")
-        return JsonResponse({'status': 'success', 'latitude': latitude, 'longitude': longitude})
+        print(f"Received location data:")
+        print(f"Latitude: {latitude}")
+        print(f"Longitude: {longitude}")
+        print(f"Heading: {heading}")
+        print(f"Total Time: {total_time}")
+        print(f"Speed: {speed}")
+        print(f"Total Distance: {total_distance}")
+        print(f"Tag: {tag}")
+
+        return JsonResponse({
+            'status': 'success',
+            'latitude': latitude,
+            'longitude': longitude,
+            'heading': heading,
+            'totalTime': total_time,
+            'speed': speed,
+            'totalDistance': total_distance,
+            'tag': tag
+        })
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+# @csrf_exempt
+# def location_view(request):
+#     if request.method == 'POST':
+#         data = json.loads(request.body)
+#         latitude = data.get('latitude')
+#         longitude = data.get('longitude')
+#         # 处理接收到的位置信息
+#         print(f"Received location: Latitude = {latitude}, Longitude = {longitude}")
+#         return JsonResponse({'status': 'success', 'latitude': latitude, 'longitude': longitude})
+#     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
 @csrf_exempt
