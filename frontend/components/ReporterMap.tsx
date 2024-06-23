@@ -106,7 +106,11 @@ const ReporterMap: React.FC<ReporterMapProps> = ({ caseId }) => {
         });
 
         if (validBounds) {
-            map.fitBounds(bounds);
+            try {
+                map.fitBounds(bounds);
+            } catch (error) {
+                console.error('Error fitting bounds:', error);
+            }
         }
     }
 }, [map, paths, colors]);
