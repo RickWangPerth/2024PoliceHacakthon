@@ -17,8 +17,11 @@ def convert_data_to_string(data):
 def send_to_chatroom(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        data['message'] = convert_data_to_string(data['message']['data'])
+        print("data type is ", type(data))
         print(data)
+        data['message'] = convert_data_to_string(data['message'])
+        print(data)
+
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             'chat',
