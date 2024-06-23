@@ -39,11 +39,12 @@ const EmergencyPage: React.FC = () => {
             
             const currentTime = Date.now();
             const elapsedTime = currentTime - startTime!;
-            const speed = calculateSpeed(distance, elapsedTime);
             const heading = calculateHeading(prevLocation, { latitude, longitude });
             const altitude = position.coords.altitude || 0;
             const tag = elapsedTime === 0 ? 'first' : 'following';
             const distance = calculateDistance(prevLocation, { latitude, longitude }, tag);
+            const speed = calculateSpeed(distance, elapsedTime);
+
 
 
 
