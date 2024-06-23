@@ -132,7 +132,27 @@ const ChatBox: React.FC = () => {
                     )}
                     {msg.type === 'json' && (
                         <div className='chatItem_json'>
-                            <pre>{JSON.stringify(JSON.parse(msg.message), null, 2)}</pre>
+                            {(() => {
+                                const pairs = msg.message.split('**');
+                                const keyValuePairs = pairs.map(pair => pair.split('##'));
+                                const whereIndex = keyValuePairs.findIndex(([key]) => key === 'Where');
+
+                                if (whereIndex === -1) {
+                                    keyValuePairs.push(['Where', 'UNKNOWN']);
+                                }
+
+                                return keyValuePairs.map(([key, value], pairIndex) => (
+                                    <p key={pairIndex}>
+                                        <strong>{key}:</strong> {key === 'Where' ? (
+                                            <a className='blue-600 underline' href={`https://www.google.com.au/maps/search/${value.replace(/ /g, '+')}`} target="_blank" rel="noopener noreferrer">
+                                                {value}
+                                            </a>
+                                        ) : (
+                                            value
+                                        )}
+                                    </p>
+                                ));
+                            })()}
                         </div>
                     )}
                     

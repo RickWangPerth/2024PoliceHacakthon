@@ -1,0 +1,117 @@
+import { useRouter } from 'next/router';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import emergencyPoints from '../../dummydata/emergencyPoints';
+import ChatBox from '@/components/ChatBox';
+const AccidentMap = dynamic(() => import('../../components/AccidentMap'), {
+  ssr: false,
+});
+
+interface EmergencyData {
+  title: string;
+  id: string;
+  incident: string;
+  time: string;
+  position: { lat: number; lng: number };
+}
+
+const EmergencyPage: React.FC = () => {
+
+  const router = useRouter();
+  const { id } = router.query;
+  const [data, setData] = useState<EmergencyData | null>(null);
+  const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((position) => {
+              const { latitude, longitude } = position.coords;
+              setLocation({ latitude, longitude });
+
+    
+
+        axios.post(`https://${window.location.host}/api/location/`, { latitude, longitude })
+          .then(response => {
+            console.log('Location sent successfully:', response.data);
+          })
+          .catch(error => {
+            console.error('Error sending location:', error);
+          });
+      },
+      error => {
+        console.error('Error getting location:', error);
+      }
+    );
+    } else {
+    console.error('Geolocation is not supported by this browser.');
+    }
+
+    if (id) {
+      console.log("ID:", id);
+      const point = emergencyPoints.find(point => point.data.id === id);
+      console.log("Point:", point);
+      if (point) {
+        setData({
+          title: point.data.title,
+          id: point.data.id,
+          incident: point.data.incident,
+          time: point.data.time,
+          position: point.position
+        });
+      } else {
+        setData(null);
+      }
+    }
+  }, [id]);
+
+  const [activeTab, setActiveTab] = useState(0);
+
+  const handleTabClick = (index: number) => {
+    setActiveTab(index);
+  };
+
+  if (!data) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="grid w-screen h-screen">
+      <div className="col-span-2 bg-gray-100 p-4 mx-2 my-4 rounded-lg">
+        <div className="tab h-full">
+            <ul className="tab-list">
+              {['OverView', 'Chat', 'Map'].map((tab, index) => (
+                <li
+                  key={tab}
+                  className={`tab-item ${index === activeTab ? 'active' : ''}`}
+                  onClick={() => handleTabClick(index)}
+                >
+                  {tab}
+                </li>
+              ))}
+            </ul>
+            <div className="tab-content h-full">
+              <div className={`tab-pane ${activeTab === 0 ? 'active' : ''}`}>
+                <h2 className="text-xl font-bold mb-4">{data.title}</h2>
+                  <ul>
+                    <li className="mb-2">accident ID: {data.id}</li>
+                    <li className="mb-2">incident: {data.incident}</li>
+                    <li className="mb-2">time: {data.time}</li>
+                  </ul>
+              </div>
+              <div className={`tab-pane h-5/6	 ${activeTab === 1 ? 'active' : ''}`}>
+                <h2 className="text-xl font-bold mb-4">Chat</h2>
+                <ChatBox/>
+              </div>
+              <div className={`tab-pane h-5/6	 ${activeTab === 2 ? 'active' : ''}`}>
+                <h2 className="text-xl font-bold mb-4">Chat</h2>
+                  <AccidentMap position={data.position} />
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EmergencyPage;
