@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 interface ReporterMapProps {
-    caseId: number;
+    caseId: string;
 }
 
 const ReporterMap: React.FC<ReporterMapProps> = ({ caseId }) => {
