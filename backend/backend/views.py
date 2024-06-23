@@ -11,19 +11,20 @@ import os
 import json
 
 def convert_data_to_string(data):
-    return '*_*_*'.join([f"{key}*_*_*{value}" for key, value in data.items()])
+    return '**'.join([f"{key}##{value}" for key, value in data.items()])
 
 @csrf_exempt
 def send_to_chatroom(request):
     if request.method == 'POST':
         data = json.loads(request.body)
+        data['message'] = convert_data_to_string(data['message']['data'])
         print(data)
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             'chat',
             {
                 'type': 'chat_message',
-                'message': convert_data_to_string(data),
+                'message': json.dumps(data),
             }
         )
         return JsonResponse({'status': 'success'})
